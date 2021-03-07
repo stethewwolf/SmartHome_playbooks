@@ -1,0 +1,7 @@
+---
+# file: nasservers.yml
+- hosts: nas
+  become: yes
+  roles:
+    - common
+    - nas
