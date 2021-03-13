@@ -1,0 +1,30 @@
+---
+- name: "Build and launch jellyfin container"
+  docker_container:
+    name: jelly
+    image: jellyfin/jellyfin:latest
+    restart_policy: always
+    network_mode: host
+    ports:
+      - 8096:8096 
+      - 8920:8920 #optional
+      - 7359:7359/udp #optional
+      - 1900:1900/udp #optional
+    volumes:
+      - "jellyfin_cache:/cache"
+      - "jellyfin_conf:/config"
+      - "torrentbox_media:/media"
+
+- name: "Build and aunch transmission server container"
+  docker_container:
+    name: transmission
+    image: linuxserver/transmission:latest 
+    restart_policy: always
+    network_mode: host
+    ports:
+      - 51413:51413
+      - 9091:9091
+    volumes:
+      - "torrentbox_media:/downloads"
+      - "transmission_conf:/config"
+      - "transmission_watch:/watch"

@@ -1,0 +1,40 @@
+---
+- name: Install Docker.io
+  apt:
+    name: docker.io
+    state: latest
+
+- name: Install python package
+  apt:
+    name: python
+    state: latest
+
+- name: Install python-pip package
+  apt:
+    name: python-pip
+    state: latest
+
+- name: Install python-setuptools package
+  apt:
+    name: python-setuptools
+    state: latest
+
+- name: Install python-docker package
+  apt:
+    name: python-docker
+    state: latest
+
+- name: "Launch portainer container"
+  docker_container:
+    name: portainer
+    image: portainer/portainer:latest
+    restart_policy: always
+    network_mode: host
+    ports:
+      - 9000:9000 
+    volumes:
+      - "portainer_data:/data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+
+

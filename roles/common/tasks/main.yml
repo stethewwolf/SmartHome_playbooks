@@ -1,0 +1,32 @@
+---
+- name: Copy firewall script
+  copy:
+    src: firewall.sh
+    dest: /usr/local/sbin/firewall.sh
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+
+# this deb install utilities to applay firewall rules at boot 
+- name: Install iptables-persitent
+  apt:
+    name: iptables-persistent
+    state: latest
+
+# this command is needed to initialize the system
+- name: "applay firewall rules"
+  command: "/usr/local/sbin/firewall.sh"
+  notify: run_iptables_save
+
+- name: Copy SSH server conf
+  copy:
+    src: firewall.sh
+    dest: /usr/local/sbin/firewall.sh
+    owner: root
+    group: root
+    mode: u=rwx,g=r,o=r
+  notify: restart_sshserver
+
+
+
+
