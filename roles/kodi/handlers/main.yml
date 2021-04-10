@@ -1,0 +1,8 @@
+---
+# kodi handlers
+- name: restart_lightdm
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    name: lightdm
+

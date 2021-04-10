@@ -26,6 +26,7 @@
 # this command is needed to initialize the system
 - name: "Configure OMV DB"
   command: "/usr/sbin/omv-confdbadm populate"
+  when: omv_first_install
 
 
 - name: Set the policy for the INPUT chain to ACCEPT

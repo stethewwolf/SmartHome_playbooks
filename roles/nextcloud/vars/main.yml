@@ -1,0 +1,8 @@
+#nextcloud_root: "nextcloud_root"
+#nextcloud_apps: "nextcloud_apps"
+#nextcloud_config: "nextcloud_config"
+#nextcloud_data: "nextcloud_data"
+#smpt_host: ""
+#smpt_mail_from: ""
+#nextcloud_admin_user: "nxtcadmin"
+#nextcloud_admin_password: "nxtcpassword"

@@ -4,27 +4,95 @@
     name: jelly
     image: jellyfin/jellyfin:latest
     restart_policy: always
-    network_mode: host
-    ports:
-      - 8096:8096 
-      - 8920:8920 #optional
-      - 7359:7359/udp #optional
-      - 1900:1900/udp #optional
+    state: present
     volumes:
       - "jellyfin_cache:/cache"
       - "jellyfin_conf:/config"
       - "torrentbox_media:/media"
+    network_mode: host
+    #uncomment following lines to enable bridged networking
+    #network_mode: bridge
+    # ports:
+    #   - 8096:8096 
+    #   - 8920:8920 #optional
+    #   - 7359:7359/udp #optional
+    #   - 1900:1900/udp #optional
+ 
+- name: "Allow new incoming packets on TCP port  8096 (Jellyfin)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 8096
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+- name: "Allow new incoming packets on TCP port  8920 (Jellyfin)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 8920
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+- name: "Allow new incoming packets on UDP port 7359 (Jellyfin)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: udp
+    destination_port: 7359
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+- name: "Allow new incoming packets on UDP port 1900 (Jellyfin)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: udp
+    destination_port: 1900
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
 
 - name: "Build and aunch transmission server container"
   docker_container:
     name: transmission
     image: linuxserver/transmission:latest 
     restart_policy: always
-    network_mode: host
-    ports:
-      - 51413:51413
-      - 9091:9091
+    state: present
     volumes:
       - "torrentbox_media:/downloads"
       - "transmission_conf:/config"
       - "transmission_watch:/watch"
+    network_mode: host
+    #uncomment following lines to enable bridged networking
+    #network_mode: host
+    # ports:
+    #   - 51413:51413
+    #   - 9091:9091
+ 
+- name: "Allow new incoming packets on TCP port  51413 (transmission)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 51413
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+- name: "Allow new incoming packets on TCP port  9091 (transmission)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 9091
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+

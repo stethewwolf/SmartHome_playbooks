@@ -30,11 +30,19 @@
     image: portainer/portainer:latest
     restart_policy: always
     network_mode: host
-    ports:
-      - 9000:9000 
     volumes:
       - "portainer_data:/data"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
+- name: "Allow new incoming SYN packets on TCP port 9000 (Portainer)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 9000
+    ctstate: NEW
+    syn: match
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
 
 

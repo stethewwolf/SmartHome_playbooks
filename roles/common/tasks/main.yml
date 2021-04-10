@@ -14,9 +14,10 @@
     state: latest
 
 # this command is needed to initialize the system
-- name: "applay firewall rules"
+- name: applay common firewall rules
   command: "/usr/local/sbin/firewall.sh"
   notify: run_iptables_save
+  when: applay_common_firewall
 
 - name: Copy SSH server conf
   copy:
@@ -28,5 +29,23 @@
   notify: restart_sshserver
 
 
+ # setup stuff to backaup using rsnapshot
+- name: create snapshot group
+  ansible.builtin.group:
+    name: snapshot
+    state: present
+    system: true
+
+- name: create snapshot user
+  ansible.builtin.user:
+    name: snapshot
+    groups: snapshot
+    state: present
+    system: true
+
+- name: Install rsync
+  apt:
+    name: rsync
+    state: latest
 
 

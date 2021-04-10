@@ -1,0 +1,10 @@
+## Here variables for ldap server
+#ldap_organization: "my company"
+#ldap_domain: "my-company.com"
+#ldap_admin_password: "My-C0mp4nY"
+ldap_ipv4_address: "172.18.0.2"
+
+## ldaphpadmin
+#ldaphpadmin_enable_ssl: "false"
+ldaphpadmin_listen_ip: "127.0.0.1"
+ldaphpadmin_ipv4_address: "172.18.0.4"

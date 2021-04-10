@@ -1,0 +1,66 @@
+---
+- name: "Create openldap container"
+  docker_container:
+    name: ldap-service
+    image: osixia/openldap
+    restart_policy: always
+    state: started
+    volumes:
+      - "ldap_data:/var/lib/ldap"
+      - "ldap_conf:/etc/ldap/slapd.d"
+    env:
+      LDAP_ORGANISATION: "{{ ldap_organization }}"
+      LDAP_DOMAIN: "{{ ldap_domain }}"
+      LDAP_ADMIN_PASSWORD: "{{ ldap_admin_password }}"
+    hostname: ldap-service
+    networks:
+      - name: "{{ docker_net_name }}"
+        ipv4_address: "{{ ldap_ipv4_address }}"
+    ports:
+      - 0.0.0.0:389:389
+  when: ldap_admin_password is defined
+
+- name: "Allow new incoming packets on TCP port 389 (openldap)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 389
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+  when: ldap_admin_password is defined
+
+- name: "Create phpldapadmin container"
+  docker_container:
+    name: phpldapadmin-service
+    image: osixia/phpldapadmin
+    restart_policy: always
+    state: started
+    volumes:
+      - "phpldapadmin_data:/var/www/phpldapadmin"
+    env:
+      PHPLDAPADMIN_HTTPS: "{{ ldaphpadmin_enable_ssl }}"
+      PHPLDAPADMIN_LDAP_HOSTS: "{{ ldap_ipv4_address }}"
+    hostname: phpldapadmin-service
+    networks:
+      - name: "{{ docker_net_name }}"
+        ipv4_address: "{{ ldaphpadmin_ipv4_address }}"
+ 
+    network_mode: bridge
+    ports:
+      - "{{ ldaphpadmin_listen_ip }}:3880:80"
+        #when: ldap_admin_password is defined
+
+- name: "Allow new incoming packets on TCP port 3880 (phpldapadmin)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 3880
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+  when: ldap_admin_password is defined
+
+

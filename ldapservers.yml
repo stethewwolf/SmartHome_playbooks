@@ -1,9 +1,9 @@
 ---
-# file: torrentboxservers.yml
+# file: ldapservers.yml
 - hosts:
     debby
   become: yes
   roles:
     - common
     - docker
-    - torrentbox
+    - openldap

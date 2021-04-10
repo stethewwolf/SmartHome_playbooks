@@ -1,0 +1,114 @@
+---
+# tasks for kodi
+- name: install kodi app
+  apt:
+    name: kodi
+    state: latest
+
+- name: install kodi-peripheral-joystick app
+  apt:
+    name: kodi-peripheral-joystick
+    state: latest
+
+- name: install kodi-pvr-iptvsimple
+  apt:
+    name: kodi-pvr-iptvsimple
+    state: latest
+
+- name: install kodi-inputstream-adaptive
+  apt:
+    name: kodi-inputstream-adaptive
+    state: latest
+
+- name: install kodi-inputstream-rtmp 
+  apt:
+    name: kodi-inputstream-rtmp
+    state: latest
+
+- name: install build-essential
+  apt:
+    name: build-essential
+    state: latest
+
+- name: install python-pip 
+  apt:
+    name: python-pip
+    state: latest
+
+- name: install python-dev 
+  apt:
+    name: python-dev
+    state: latest
+
+- name: install libffi-dev 
+  apt:
+    name: libffi-dev
+    state: latest
+
+- name: install libssl-dev 
+  apt:
+    name: libssl-dev 
+    state: latest
+
+- name: install libnss3 
+  apt:
+    name: libnss3
+    state: latest
+
+- name: install xserver-xorg-input-joystick
+  apt:
+    name: xserver-xorg-input-joystick
+    state: latest
+
+# tasks for kodi
+- name: install lightdm
+  apt:
+    name: lightdm
+    state: latest
+
+# tasks for kodi
+- name: install accountsservice
+  apt:
+    name: accountsservice
+    state: latest
+
+- name: create kodi group
+  ansible.builtin.group:
+    name: kodi
+    state: present
+    system: true
+
+- name: create kodi user
+  ansible.builtin.user:
+    name: kodi
+    groups: kodi, video, audio
+    state: present
+    system: true
+
+- name: set default graphical target
+  shell : "systemctl set-default graphical.target"
+  become: yes
+  become_user: root 
+
+- name: copy lightdm conf file
+  ansible.builtin.copy:
+    src: lightdm.conf
+    dest: /etc/lightdm/lightdm.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart_lightdm
+
+- name: "Allow new incoming packets on TCP port  9090 (kodi)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 9090
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+
+
+

@@ -1,7 +1,10 @@
 ---
+# file: main.yml
 - hosts: all
   become: yes
-# file: site.yml
-#- include: webservers.yml
-#- include: dbservers.yml
+
+- include: ldapservers.yml
 - include: nasservers.yml
+- include: nxtcservers.yml
+- include: kodimachines.yml
+- include: torrentboxservers.yml

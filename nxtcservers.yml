@@ -1,9 +1,9 @@
 ---
-# file: torrentboxservers.yml
+# file: nxtcservers.yml
 - hosts:
     debby
   become: yes
   roles:
     - common
     - docker
-    - torrentbox
+    - nextcloud

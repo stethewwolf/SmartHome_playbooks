@@ -1,0 +1,35 @@
+---
+- name: "Create 389ds container"
+  docker_container:
+    name: 389ds
+    image: 389ds/dirsrv:latest
+    restart_policy: always
+    network_mode: bridge
+    state: present
+    volumes:
+      - "389ds_data:/data"
+    ports:
+      - 389:3389
+      - 636:3636
+
+- name: "Allow new incoming packets on TCP port 389 (389ds)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 389
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+- name: "Allow new incoming packets on TCP port  636 (389ds)"
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 636
+    ctstate: NEW
+    jump: ACCEPT
+    comment: Accept new HTTP connections.  
+  notify: run_iptables_save
+
+

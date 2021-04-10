@@ -1,8 +1,8 @@
 ---
-# file: nasservers.yml
-- hosts: 
+# file: kodimachines.yml
+- hosts:
     debby
   become: yes
   roles:
     - common
-    - nas
+    - kodi
